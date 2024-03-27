@@ -48,7 +48,9 @@ func (s *SCC) CGO(f handle) {
 	go func() {
 		s.WaitGroup.Add(1)
 		defer s.WaitGroup.Done()
-		f(context.WithoutCancel(s.Context))
+		ctx, cancel := context.WithCancel(s.Context)
+		defer cancel()
+		f(ctx)
 	}()
 }
 
@@ -67,7 +69,9 @@ func (s *SCC) Try(f handle) {
 	}()
 	s.WaitGroup.Add(1)
 	defer s.WaitGroup.Done()
-	f(context.WithoutCancel(s.Context))
+	ctx, cancel := context.WithCancel(s.Context)
+	defer cancel()
+	f(ctx)
 }
 
 // Wait 阻塞模式等待所有协程结束
@@ -98,4 +102,8 @@ func (s *SCC) Cancel() bool {
 // Stopped 判断是否已经关闭
 func (s *SCC) Stopped() bool {
 	return s.stop > 0
+}
+
+func (s *SCC) WithCancel() (context.Context, context.CancelFunc) {
+	return context.WithCancel(s.Context)
 }

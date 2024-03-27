@@ -1,6 +1,7 @@
 package scc
 
 import (
+	"context"
 	"time"
 )
 
@@ -44,4 +45,8 @@ func Cancel() bool {
 // Stopped 判断是否已经关闭
 func Stopped() bool {
 	return scc.Stopped()
+}
+
+func WithCancel() (context.Context, context.CancelFunc) {
+	return scc.WithCancel()
 }
