@@ -20,7 +20,7 @@ func New(ctx context.Context) *SCC {
 		ctx = context.Background()
 	}
 	s := &SCC{Catch: catch, WaitGroup: sync.WaitGroup{}}
-	s.Context, s.cancel = context.WithCancel(ctx)
+	s.context, s.cancel = context.WithCancel(ctx)
 	s.WaitGroup.Add(1)
 	return s
 }
@@ -28,10 +28,10 @@ func New(ctx context.Context) *SCC {
 // SCC 协程控制器
 type SCC struct {
 	sync.WaitGroup
-	context.Context
-	stop   int32
-	cancel context.CancelFunc
-	Catch  func(error) //异常捕获,默认控制台打印
+	stop    int32
+	cancel  context.CancelFunc
+	context context.Context
+	Catch   func(error) //异常捕获,默认控制台打印
 }
 
 // GO 普通的GO
@@ -48,7 +48,7 @@ func (s *SCC) CGO(f handle) {
 	go func() {
 		s.WaitGroup.Add(1)
 		defer s.WaitGroup.Done()
-		ctx, cancel := context.WithCancel(s.Context)
+		ctx, cancel := s.WithCancel()
 		defer cancel()
 		f(ctx)
 	}()
@@ -69,7 +69,7 @@ func (s *SCC) Try(f handle) {
 	}()
 	s.WaitGroup.Add(1)
 	defer s.WaitGroup.Done()
-	ctx, cancel := context.WithCancel(s.Context)
+	ctx, cancel := s.WithCancel()
 	defer cancel()
 	f(ctx)
 }
@@ -104,6 +104,17 @@ func (s *SCC) Stopped() bool {
 	return s.stop > 0
 }
 
+func (s *SCC) Error() error {
+	return s.context.Err()
+}
+
+func (s *SCC) Value(key any) any {
+	return s.context.Value(key)
+}
+
+func (s *SCC) Deadline() (deadline time.Time, ok bool) {
+	return s.context.Deadline()
+}
 func (s *SCC) WithCancel() (context.Context, context.CancelFunc) {
-	return context.WithCancel(s.Context)
+	return context.WithCancel(s.context)
 }

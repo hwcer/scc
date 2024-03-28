@@ -58,7 +58,7 @@ func (d *Daemon) handle(w *Worker) {
 		d.scc.WaitGroup.Add(1)
 		defer d.scc.WaitGroup.Done()
 		var ctx context.Context
-		ctx, w.Cancel = context.WithCancel(d.scc.Context)
+		ctx, w.Cancel = d.scc.WithCancel()
 		w.Handle(ctx)
 	}()
 }
