@@ -118,3 +118,7 @@ func (s *SCC) Deadline() (deadline time.Time, ok bool) {
 func (s *SCC) WithCancel() (context.Context, context.CancelFunc) {
 	return context.WithCancel(s.context)
 }
+
+func (s *SCC) WithTimeout(t time.Duration) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(s.context, t)
+}

@@ -50,3 +50,7 @@ func Stopped() bool {
 func WithCancel() (context.Context, context.CancelFunc) {
 	return scc.WithCancel()
 }
+
+func WithTimeout(t time.Duration) (context.Context, context.CancelFunc) {
+	return scc.WithTimeout(t)
+}
