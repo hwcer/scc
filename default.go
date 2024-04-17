@@ -47,6 +47,10 @@ func Stopped() bool {
 	return scc.Stopped()
 }
 
+func Context() context.Context {
+	return scc.Context()
+}
+
 func WithCancel() (context.Context, context.CancelFunc) {
 	return scc.WithCancel()
 }

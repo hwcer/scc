@@ -111,10 +111,13 @@ func (s *SCC) Error() error {
 func (s *SCC) Value(key any) any {
 	return s.context.Value(key)
 }
-
+func (s *SCC) Context() context.Context {
+	return s.context
+}
 func (s *SCC) Deadline() (deadline time.Time, ok bool) {
 	return s.context.Deadline()
 }
+
 func (s *SCC) WithCancel() (context.Context, context.CancelFunc) {
 	return context.WithCancel(s.context)
 }
